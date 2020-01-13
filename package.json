@@ -1,0 +1,51 @@
+{
+  "name": "scoop-ui",
+  "version": "1.0.0",
+  "description": "A UI for the Scoop package manager",
+  "main": "main.js",
+  "scripts": {
+    "start": "electron .",
+    "start-dev": "set NODE_ENV=development&& electron .",
+    "postinstall": "vendor-copy",
+    "dist": "electron-packager . scoop-ui --platform=win32 --arch=x64 --out ./out"
+  },
+  "repository": "https://github.com/gitolicious/scoop-ui",
+  "keywords": [
+    "scoop"
+  ],
+  "author": "gitolicious",
+  "license": "CC0-1.0",
+  "devDependencies": {
+    "devtron": "^1.4.0",
+    "electron": "^7.1.8",
+    "electron-packager": "^14.1.1",
+    "vendor-copy": "^2.0.0",
+    "@fortawesome/fontawesome-free": "^5.12.0",
+    "bootstrap": "^4.4.1",
+    "tabulator-tables": "^4.5.3"
+  },
+  "dependencies": {
+    "electron-json-storage": "^4.1.8",
+    "ipc": "0.0.1",
+    "jquery": "^3.4.1",
+    "popper": "^1.0.1"
+  },
+  "vendorCopy": [
+    {
+      "from": "node_modules/tabulator-tables/dist",
+      "to": "dist/tabulator"
+    },
+    {
+      "from": "node_modules/@fortawesome/fontawesome-free",
+      "to": "dist/fontawesome"
+    },
+    {
+      "from": "node_modules/bootstrap/dist",
+      "to": "dist/bootstrap"
+    },
+    {
+      "from": "node_modules/jquery/dist",
+      "to": "dist/jquery/js"
+    }
+  ]
+}
