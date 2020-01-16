@@ -18,7 +18,7 @@ const modalButtons = {
 };
 
 const columnButtons = {
-  update: {element: document.querySelector('#scoop-apps ["tabulator-field"="update"]'), channel: 'scoop-update-app'}
+  update: {elementSelector: '#scoop-apps ["tabulator-field"="update"]', channel: 'scoop-update-app'}
 };
 
 // main table
@@ -123,19 +123,23 @@ Object.values(columnButtons).forEach(button => {
 
 function buttonActionStarted(button, eventId) {
   console.log(`${button.channel} running...`);
-  $(button.element.querySelector('.wait')).collapse('show');
-  $(button.element).addClass('disabled');
-  $(button.element).removeClass('btn-warning');
-  $(button.element).removeClass('btn-danger');
+  if(button.element) {
+    $(button.element.querySelector('.wait')).collapse('show');
+    $(button.element).addClass('disabled');
+    $(button.element).removeClass('btn-warning');
+    $(button.element).removeClass('btn-danger');
+  }
 
   makeToast(eventId, `${button.channel} running...`, {autohide: false, progressBar: true})
 }
 
 function buttonActionFinished(button, eventId, success) {
   console.log(`${button.channel} finished.`);
-  $(button.element.querySelector('.wait')).collapse('hide');
-  $(button.element).removeClass('disabled');
-  if (!success) $(button.element).addClass('btn-danger');
+  if(button.element) {
+    $(button.element.querySelector('.wait')).collapse('hide');
+    $(button.element).removeClass('disabled');
+    if (!success) $(button.element).addClass('btn-danger');
+  }
 
   if (eventId) $(`#toasts #toast-${eventId}`).toast('hide');
   if (success) {
