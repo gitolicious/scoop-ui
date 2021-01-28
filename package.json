@@ -19,7 +19,7 @@
     "@fortawesome/fontawesome-free": "^5.15.1",
     "bootstrap": "^4.5.3",
     "devtron": "^1.4.0",
-    "electron": "^7.3.2",
+    "electron": "^9.4.0",
     "electron-packager": "^15.2.0",
     "tabulator-tables": "^4.9.1",
     "vendor-copy": "^2.0.0"
