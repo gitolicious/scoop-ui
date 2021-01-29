@@ -16,17 +16,17 @@
   "author": "gitolicious",
   "license": "CC0-1.0",
   "devDependencies": {
-    "@fortawesome/fontawesome-free": "^5.15.1",
-    "bootstrap": "^4.5.3",
+    "@fortawesome/fontawesome-free": "^5.15.2",
+    "bootstrap": "^4.6.0",
     "devtron": "^1.4.0",
-    "electron": "^9.4.0",
+    "electron": "^11.2.1",
     "electron-packager": "^15.2.0",
-    "tabulator-tables": "^4.9.1",
+    "tabulator-tables": "^4.9.3",
     "vendor-copy": "^2.0.0"
   },
   "dependencies": {
     "electron-json-storage": "^4.3.0",
-    "ipc": "0.0.1",
+    "ipc": "^0.0.1",
     "jquery": "^3.5.1",
     "popper": "^1.0.1"
   },
