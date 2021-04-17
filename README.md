@@ -21,7 +21,7 @@ In case you are behind a proxy, do not forget to set the following environment v
 
     npm run start
 
-For development purposes, the `start-dev` script will start with the [Chrome DevTools](https://developers.google.com/web/tools/chrome-devtools/) open and the [Devtron extension](https://electronjs.org/devtron) enabled.
+For development purposes, the `start-dev` script will start with the [Chrome DevTools](https://developers.google.com/web/tools/chrome-devtools/) open.
 
 ### Build
 

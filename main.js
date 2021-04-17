@@ -1,12 +1,12 @@
 // require //
-const {app, BrowserWindow} = require('electron');
-const ipc = require('electron').ipcMain;
+const { app: electronApp, BrowserWindow } = require('electron');
+const { ipcMain: ipc } = require('electron');
 
 const storage = require('electron-json-storage');
 
 const path = require('path');
 
-const {spawn} = require('child_process');
+const { spawn } = require('child_process');
 
 // globals //
 let mainWindow;
@@ -24,7 +24,7 @@ function createWindow() {
     width: 800,
     height: 600,
     webPreferences: {
-      preload: path.join(__dirname, 'preload.js')
+      preload: path.join(__dirname, 'preload.js'),
     }
   });
 
@@ -49,11 +49,11 @@ function createWindow() {
   });
 }
 
-app.on('ready', createWindow);
+electronApp.on('ready', createWindow);
 
-app.on('window-all-closed', app.quit);
+electronApp.on('window-all-closed', electronApp.quit);
 
-app.on('activate', () => {
+electronApp.on('activate', () => {
   if (mainWindow === null) createWindow()
 });
 
@@ -79,7 +79,7 @@ function scoopSpawn(argsArray, lineCallback, exitCallback) {
   );
 
   childProcess.stdout.on('data', (data) => {
-    mainWindow.webContents.send('console-log', data);
+    mainWindow.webContents.send('console-log', data.toString());
     if (lineCallback) {
       lineBuffer += data;
       // flush when line is complete
@@ -94,7 +94,7 @@ function scoopSpawn(argsArray, lineCallback, exitCallback) {
   });
 
   childProcess.stderr.on('data', (data) => {
-    mainWindow.webContents.send('console-log', data);
+    mainWindow.webContents.send('console-log', data.toString());
     console.error('stderr: ' + data.toString());
   });
 
@@ -108,37 +108,37 @@ function scoopSpawn(argsArray, lineCallback, exitCallback) {
 // IPC listeners //
 ///////////////////
 
-ipc.on('scoop-list', (event) => {
-    const scoopListRegex = /^\s+([^\s]+)\s+([^\s]+)(\s+\[([^\s]+)])?$/;
-    const eventId = getRandomId();
+ipc.on('scoop-list', (_event) => {
+  const scoopListRegex = /^\s+([^\s]+)\s+([^\s]+)(\s+\[([^\s]+)])?$/;
+  const eventId = getRandomId();
 
-    mainWindow.webContents.send('scoop-list-started', eventId);
+  mainWindow.webContents.send('scoop-list-started', eventId);
 
-    console.log('scoop list');
-    scoopSpawn(
-      [
-        scoopBinary,
-        'list',
-      ],
-      (appRaw) => {
-        // does this line contain app list information?
-        const appArray = appRaw.match(scoopListRegex);
-        if (appArray) {
-          const app = {
-            name: appArray[1],
-            version: appArray[2],
-            bucket: appArray[4] ? appArray[4] : '(scoop)'
-          };
-          mainWindow.webContents.send('app-list-entry', app);
-        }
-      },
-      (code) => {
-        mainWindow.webContents.send('scoop-list-finished', eventId, code === 0);
-      })
-  }
+  console.log('scoop list');
+  scoopSpawn(
+    [
+      scoopBinary,
+      'list',
+    ],
+    (appRaw) => {
+      // does this line contain app list information?
+      const appArray = appRaw.match(scoopListRegex);
+      if (appArray) {
+        const appInfo = {
+          name: appArray[1],
+          version: appArray[2],
+          bucket: appArray[4] ? appArray[4] : '(scoop)',
+        };
+        mainWindow.webContents.send('app-list-entry', appInfo);
+      }
+    },
+    (code) => {
+      mainWindow.webContents.send('scoop-list-finished', eventId, code === 0);
+    })
+}
 );
 
-ipc.on('scoop-status', (event) => {
+ipc.on('scoop-status', (_event) => {
   const scoopStatusRegex = /^\s+([^\s]+):\s+([^\s]+)\s+->\s+([^\s]+)$/;
   const eventId = getRandomId();
 
@@ -153,13 +153,12 @@ ipc.on('scoop-status', (event) => {
     (appRaw) => {
       const appArray = appRaw.match(scoopStatusRegex);
       if (appArray) {
-        const app = {
+        const appInfo = {
           name: appArray[1],
           version: appArray[2],
           latest: appArray[3],
-          upToDate: false // update available
         };
-        mainWindow.webContents.send('app-list-entry', app);
+        mainWindow.webContents.send('app-list-entry', appInfo);
       }
     },
     (code) => {
@@ -167,7 +166,7 @@ ipc.on('scoop-status', (event) => {
     });
 });
 
-ipc.on('scoop-bucket-list', (event) => {
+ipc.on('scoop-bucket-list', (_event) => {
   const eventId = getRandomId();
   mainWindow.webContents.send('scoop-bucket-list-started', eventId);
 
@@ -189,7 +188,7 @@ ipc.on('scoop-bucket-list', (event) => {
     });
 });
 
-ipc.on('scoop-update', (event) => {
+ipc.on('scoop-update', (_event) => {
   const eventId = getRandomId();
   mainWindow.webContents.send('scoop-update-started', eventId);
 
@@ -207,28 +206,29 @@ ipc.on('scoop-update', (event) => {
     });
 });
 
-ipc.on('scoop-update-app', (event, app) => {
-  app = sanitize(app);
+ipc.on('scoop-update-app', (_event, appName) => {
+  appName = sanitize(appName);
 
   const eventId = getRandomId();
-  mainWindow.webContents.send('scoop-update-app-started', eventId, app);
+  mainWindow.webContents.send('scoop-update-app-started', eventId, appName);
 
-  console.log(`scoop update app ${app}`);
+  console.log(`scoop update app ${appName}`);
   scoopSpawn(
     [
       scoopBinary,
       'update',
-      app,
+      appName,
     ],
     null,
     (code) => {
-      mainWindow.webContents.send('scoop-update-app-finished', eventId, code === 0, app);
+      mainWindow.webContents.send('scoop-update-app-finished', eventId, code === 0, appName);
       // refresh app list after scoop update
+      ipc.emit('scoop-list');
       ipc.emit('scoop-status');
     });
 });
 
-ipc.on('scoop-update-all', (event) => {
+ipc.on('scoop-update-all', (_event) => {
   const eventId = getRandomId();
   mainWindow.webContents.send('scoop-update-all-started', eventId);
 
@@ -248,35 +248,35 @@ ipc.on('scoop-update-all', (event) => {
 });
 
 
-ipc.on('scoop-uninstall-app', (event, app) => {
-  app = sanitize(app);
+ipc.on('scoop-uninstall-app', (_event, appName) => {
+  appName = sanitize(appName);
 
   const eventId = getRandomId();
-  mainWindow.webContents.send('scoop-uninstall-app-started', eventId, app);
+  mainWindow.webContents.send('scoop-uninstall-app-started', eventId, appName);
 
-  console.log(`scoop uninstall app ${app}`);
+  console.log(`scoop uninstall app ${appName}`);
   scoopSpawn(
     [
       scoopBinary,
       'uninstall',
-      app,
+      appName,
     ],
     null,
     (code) => {
-      mainWindow.webContents.send('scoop-uninstall-app-finished', eventId, code === 0, app);
-      if (code === 0) mainWindow.webContents.send('app-list-entry-remove', app);
+      mainWindow.webContents.send('scoop-uninstall-app-finished', eventId, code === 0, appName);
+      if (code === 0) mainWindow.webContents.send('app-list-entry-remove', appName);
       // refresh app list after scoop update
       ipc.emit('scoop-status');
     });
 });
 
-ipc.on('scoop-checkver', (event, bucket) => {
+ipc.on('scoop-checkver', (_event, bucket) => {
   bucket = sanitize(bucket);
   const eventId = getRandomId();
   mainWindow.webContents.send('scoop-checkver-started', eventId, bucket);
 
   favoriteBucket = bucket;
-  storage.set('favorite-bucket', {bucket: bucket}, (error) => {
+  storage.set('favorite-bucket', { bucket: bucket }, (error) => {
     if (error) throw error;
     console.log(`saved bucket ${favoriteBucket} as favorite`);
   });

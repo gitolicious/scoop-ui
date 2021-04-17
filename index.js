@@ -1,24 +1,24 @@
 'use strict';
 
-const ipc = ipcRenderer;
+const ipc = window.api;
 
 // HTML elements //
 
 // buttons
 const scoopButtons = {
-  list: {element: document.querySelector('.scoop-list'), channel: 'scoop-list'},
-  status: {element: document.querySelector('.scoop-status'), channel: 'scoop-status'},
-  update: {element: document.querySelector('.scoop-update'), channel: 'scoop-update'},
-  updateAll: {element: document.querySelector('.scoop-update-all'), channel: 'scoop-update-all'}
+  list: { element: document.querySelector('.scoop-list'), channel: 'scoop-list' },
+  status: { element: document.querySelector('.scoop-status'), channel: 'scoop-status' },
+  update: { element: document.querySelector('.scoop-update'), channel: 'scoop-update' },
+  updateAll: { element: document.querySelector('.scoop-update-all'), channel: 'scoop-update-all' }
 };
 
 const modalButtons = {
-  uninstall: {element: document.querySelector('#uninstall-modal .confirm'), channel: 'scoop-uninstall-app'},
-  checkver: {element: document.querySelector('#bucket-selection-modal .confirm'), channel: 'scoop-checkver'}
+  uninstall: { element: document.querySelector('#uninstall-modal .confirm'), channel: 'scoop-uninstall-app' },
+  checkver: { element: document.querySelector('#bucket-selection-modal .confirm'), channel: 'scoop-checkver' }
 };
 
 const columnButtons = {
-  update: {elementSelector: '#scoop-apps ["tabulator-field"="update"]', channel: 'scoop-update-app'}
+  update: { elementSelector: '#scoop-apps ["tabulator-field"="update"]', channel: 'scoop-update-app' }
 };
 
 // main table
@@ -38,7 +38,7 @@ let scoopApps = [];
 
 // init //
 
-document.addEventListener('DOMContentLoaded', (event) => {
+document.addEventListener('DOMContentLoaded', (_event) => {
   // init table
   appTable = new Tabulator(scoopAppListTableElement, {
     reactiveData: true,
@@ -55,8 +55,10 @@ document.addEventListener('DOMContentLoaded', (event) => {
         title: 'Bucket',
         field: 'bucket',
         sorter: 'string',
+        formatter: (cell) => /[^\\]*$/.exec(cell.getValue())[0],
+        tooltip: (cell) => cell.getValue().includes('\\') ? cell.getValue() : false,
         headerFilter: 'select',
-        headerFilterParams: {values: []}
+        headerFilterParams: { values: [] }
       },
       {
         title: 'Version',
@@ -73,22 +75,20 @@ document.addEventListener('DOMContentLoaded', (event) => {
       {
         title: 'Up to date',
         field: 'upToDate',
-        mutator: (value, data) => data.latest === undefined || data.version === data.latest,
         formatter: 'tickCross',
         headerFilter: 'select',
-        headerFilterParams: {values: {'true': true, 'false': false}}
+        headerFilterParams: { values: { 'true': '✔', 'false': '❌' } }
       },
       {
         title: 'Update',
-        field: 'update',
-        mutator: (value, data) => !data.upToDate,
+        field: 'updateAvailable',
         formatter: (cell) => cell.getValue() ? '<i class="fa fa-upload"></i>' : '',
-        cellClick: (event, cell) => cell.getValue() && ipc.send('scoop-update-app', cell.getRow().getData().name)
+        cellClick: (_uiEvent, cell) => cell.getValue() && ipc.send(columnButtons.update.channel, cell.getRow().getData().name)
       },
       {
         title: 'Uninstall',
-        formatter: (cell) => '<i class="fa fa-trash" data-toggle="modal" data-target="#uninstall-modal"></i>',
-        cellClick: (event, cell) => $('#uninstall-modal').data('app', cell.getRow().getData().name)
+        formatter: (_cell) => '<i class="fa fa-trash" data-toggle="modal" data-target="#uninstall-modal"></i>',
+        cellClick: (_uiEvent, cell) => $('#uninstall-modal').data('app', cell.getRow().getData().name)
       }
     ],
     tableBuilt: () => {
@@ -104,38 +104,38 @@ document.addEventListener('DOMContentLoaded', (event) => {
 
 Object.values(scoopButtons).forEach(button => {
   button.element.addEventListener('click', () => ipc.send(button.channel, button.args));
-  ipc.on(`${button.channel}-started`, (event, eventId) => buttonActionStarted(button, eventId));
-  ipc.on(`${button.channel}-finished`, (event, eventId, success) => buttonActionFinished(button, eventId, success));
+  ipc.on(`${button.channel}-started`, (eventId) => buttonActionStarted(button, eventId));
+  ipc.on(`${button.channel}-finished`, (eventId, success) => buttonActionFinished(button, eventId, success));
 });
 
 Object.values(modalButtons).forEach(button => {
-  ipc.on(`${button.channel}-started`, (event, eventId) => buttonActionStarted(button, eventId));
-  ipc.on(`${button.channel}-finished`, (event, eventId, success) => buttonActionFinished(button, eventId, success));
+  ipc.on(`${button.channel}-started`, (eventId) => buttonActionStarted(button, eventId));
+  ipc.on(`${button.channel}-finished`, (eventId, success) => buttonActionFinished(button, eventId, success));
 });
 modalButtons.uninstall.element.addEventListener('click', () => ipc.send(modalButtons.uninstall.channel, $('#uninstall-modal').data('app')));
 modalButtons.checkver.element.addEventListener('click', () => ipc.send(modalButtons.checkver.channel, $('#bucket-selection input:radio:checked').val()));
 
 Object.values(columnButtons).forEach(button => {
-  ipc.on(`${button.channel}-started`, (event, eventId) => buttonActionStarted(button, eventId));
-  ipc.on(`${button.channel}-finished`, (event, eventId, success) => buttonActionFinished(button, eventId, success));
+  ipc.on(`${button.channel}-started`, (eventId) => buttonActionStarted(button, eventId));
+  ipc.on(`${button.channel}-finished`, (eventId, success) => buttonActionFinished(button, eventId, success));
 });
 
 
 function buttonActionStarted(button, eventId) {
   console.log(`${button.channel} running...`);
-  if(button.element) {
+  if (button.element) {
     $(button.element.querySelector('.wait')).collapse('show');
     $(button.element).addClass('disabled');
     $(button.element).removeClass('btn-warning');
     $(button.element).removeClass('btn-danger');
   }
 
-  makeToast(eventId, `${button.channel} running...`, {autohide: false, progressBar: true})
+  makeToast(eventId, `${button.channel} running...`, { autohide: false, progressBar: true })
 }
 
 function buttonActionFinished(button, eventId, success) {
   console.log(`${button.channel} finished.`);
-  if(button.element) {
+  if (button.element) {
     $(button.element.querySelector('.wait')).collapse('hide');
     $(button.element).removeClass('disabled');
     if (!success) $(button.element).addClass('btn-danger');
@@ -143,9 +143,9 @@ function buttonActionFinished(button, eventId, success) {
 
   if (eventId) $(`#toasts #toast-${eventId}`).toast('hide');
   if (success) {
-    makeToast(null, `${button.channel} finished.`, {delay: 1500})
+    makeToast(null, `${button.channel} finished.`, { delay: 1500 })
   } else {
-    makeToast(null, `${button.channel} failed!`, {autohide: false})
+    makeToast(null, `${button.channel} failed!`, { autohide: false })
   }
 }
 
@@ -167,7 +167,12 @@ function makeToast(eventId, body, options) {
 
 // IPC logic //
 
-ipc.on('app-list-entry', (event, newApp) => {
+ipc.on('app-list-entry', (newApp) => {
+  // calculate update status
+  if (newApp.latest === undefined) newApp.latest = '';
+  newApp.upToDate = (newApp.latest === '' || newApp.version && newApp.version === newApp.latest);
+  newApp.updateAvailable = (newApp.latest !== '' && newApp.version && newApp.version !== newApp.latest);
+
   const foundApp = scoopApps.find(app => (app.name === newApp.name));
   if (foundApp) {
     // merge existing objects (use assign instead of object spread so that Tabulator's auto-update can pick it up)
@@ -177,7 +182,7 @@ ipc.on('app-list-entry', (event, newApp) => {
   }
 });
 
-ipc.on('app-list-entry-remove', (event, removedApp) => {
+ipc.on('app-list-entry-remove', (removedApp) => {
   const foundApp = scoopApps.find(app => (app.name === removedApp));
   if (foundApp) {
     scoopApps.splice(scoopApps.indexOf(foundApp), 1);
@@ -186,7 +191,7 @@ ipc.on('app-list-entry-remove', (event, removedApp) => {
   }
 });
 
-ipc.on('bucket-list-entry', (event, bucket, favorite) => {
+ipc.on('bucket-list-entry', (bucket, favorite) => {
   const bucketColumn = appTable.getColumn('bucket');
   const filterValues = bucketColumn.getDefinition().headerFilterParams.values;
   if (!filterValues.includes(bucket)) {
@@ -207,7 +212,7 @@ ipc.on('bucket-list-entry', (event, bucket, favorite) => {
   }
 });
 
-ipc.on('console-log', (event, line) => {
+ipc.on('console-log', (line) => {
   scoopConsoleElement.value += line;
   // scroll to bottom
   scoopConsoleElement.scrollTop = scoopConsoleElement.scrollHeight;
