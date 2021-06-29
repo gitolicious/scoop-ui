@@ -17,8 +17,8 @@
   "license": "CC0-1.0",
   "devDependencies": {
     "@fortawesome/fontawesome-free": "^5.15.3",
-    "bootstrap": "^4.6.0",
-    "electron": "^13.1.2",
+    "bootstrap": "^5.0.2",
+    "electron": "^13.1.4",
     "electron-packager": "^15.2.0",
     "tabulator-tables": "^4.9.3",
     "vendor-copy": "^3.0.1"
