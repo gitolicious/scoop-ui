@@ -26,8 +26,7 @@
   "dependencies": {
     "electron-json-storage": "^4.5.0",
     "ipc": "^0.0.1",
-    "jquery": "^3.6.0",
-    "popper": "^1.0.1"
+    "jquery": "^3.6.0"
   },
   "vendorCopy": [
     {
