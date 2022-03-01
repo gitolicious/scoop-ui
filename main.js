@@ -45,7 +45,7 @@ function createWindow() {
     if (error) throw error;
 
     favoriteBucket = data.bucket;
-    console.log(`restored favorite bucket ${favoriteBucket}`);
+    console.log(favoriteBucket && `restored favorite bucket ${favoriteBucket}` || 'no favorite bucket set');
   });
 }
 
