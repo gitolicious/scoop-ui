@@ -63,7 +63,7 @@ electronApp.on('activate', () => {
 
 function sanitize(string) {
   // use sanitizer from https://github.com/lukesampson/scoop/blob/08af9ff6e7f7b017701c0c9114294b13e1e83fb8/lib/core.ps1#L187
-  return string.replace(/[/\\?:*<>|]/, '');
+  return string.replace(/[/\\?:*<>|]/g, '');
 }
 
 /////////////////
