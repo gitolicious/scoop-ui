@@ -109,7 +109,7 @@ function scoopSpawn(argsArray, lineCallback, exitCallback) {
 ///////////////////
 
 ipc.on('scoop-list', (_event) => {
-  const scoopListRegex = /^\s+([^\s]+)\s+([^\s]+)(\s+\[([^\s]+)])?$/;
+  const scoopListRegex = /^(?<name>[^\s]+)\s+(?<version>[^\s]+)\s+(?<bucket>[^\s]+)\s+(\d{4}-\d{2}-\d{2}\s\d{2}:\d{2}:\d{2})\s*$/;
   const eventId = getRandomId();
 
   mainWindow.webContents.send('scoop-list-started', eventId);
@@ -122,12 +122,12 @@ ipc.on('scoop-list', (_event) => {
     ],
     (appRaw) => {
       // does this line contain app list information?
-      const appArray = appRaw.match(scoopListRegex);
-      if (appArray) {
+      if (scoopListRegex.test(appRaw)) {
+        const { groups: { name, version, bucket } } = appRaw.match(scoopListRegex);
         const appInfo = {
-          name: appArray[1],
-          version: appArray[2],
-          bucket: appArray[4] ? appArray[4] : '(scoop)',
+          name: name,
+          version: version,
+          bucket: bucket,
         };
         mainWindow.webContents.send('app-list-entry', appInfo);
       }
