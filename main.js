@@ -139,7 +139,7 @@ ipc.on('scoop-list', (_event) => {
 );
 
 ipc.on('scoop-status', (_event) => {
-  const scoopStatusRegex = /^\s+([^\s]+):\s+([^\s]+)\s+->\s+([^\s]+)$/;
+  const scoopStatusRegex = /^(?<name>[^\s]+)\s+(?<version>[^\s]+)\s+(?<latest>[^\s]+)\s*$/;
   const eventId = getRandomId();
 
   mainWindow.webContents.send('scoop-status-started', eventId);
@@ -151,12 +151,12 @@ ipc.on('scoop-status', (_event) => {
       'status',
     ],
     (appRaw) => {
-      const appArray = appRaw.match(scoopStatusRegex);
-      if (appArray) {
+      if (scoopStatusRegex.test(appRaw)) {
+        const { groups: { name, version, latest } } = appRaw.match(scoopStatusRegex);
         const appInfo = {
-          name: appArray[1],
-          version: appArray[2],
-          latest: appArray[3],
+          name: name,
+          version: version,
+          latest: latest,
         };
         mainWindow.webContents.send('app-list-entry', appInfo);
       }
