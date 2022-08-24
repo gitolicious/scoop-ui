@@ -91,12 +91,12 @@ document.addEventListener('DOMContentLoaded', (_event) => {
         cellClick: (_uiEvent, cell) => $('#uninstall-modal').data('app', cell.getRow().getData().name)
       }
     ],
-    tableBuilt: () => {
+  });
+  appTable.on('tableBuilt', () => {
       // get apps and buckets
       ipc.send(scoopButtons.list.channel);
       ipc.send(scoopButtons.status.channel);
       ipc.send('scoop-bucket-list');
-    }
   });
 });
 
