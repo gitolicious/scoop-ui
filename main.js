@@ -7,6 +7,7 @@ const storage = require('electron-json-storage');
 const path = require('path');
 
 const { spawn } = require('child_process');
+const { fstat } = require('fs');
 
 // globals //
 let mainWindow;
@@ -282,11 +283,15 @@ ipc.on('scoop-checkver', (_event, bucket) => {
   });
 
   console.log(`scoop checkver bucket ${bucket}`);
+  let bucketFolder = `${process.env["SCOOP"]}\\buckets\\${bucket}${bucketSubFolder}`;
+  if (fs.existsSync(`${process.env["SCOOP"]}\\buckets\\${bucket}\\bucket`)) {
+    bucketFolder += '\\bucket'
+  };
   scoopSpawn(
     [
       `${process.env["SCOOP"]}\\apps\\scoop\\current\\bin\\checkver.ps1`,
       '*',
-      `${process.env["SCOOP"]}\\buckets\\${bucket}`,
+      bucketFolder,
       '-u',
     ],
     null,
