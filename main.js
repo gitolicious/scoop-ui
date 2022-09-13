@@ -7,7 +7,6 @@ const storage = require('electron-json-storage');
 const path = require('path');
 
 const { spawn } = require('child_process');
-const { fstat } = require('fs');
 
 // globals //
 let mainWindow;
