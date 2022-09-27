@@ -10,6 +10,8 @@
   <!--------->
   <!-- bootstrap -->
   <link rel="stylesheet" href="dist/bootstrap/css/bootstrap.min.css">
+  <!-- custom -->
+  <link rel="stylesheet" href="custom.css">
 </head>
 <body>
 
@@ -69,10 +71,12 @@
   <div class="card">
     <div class="card-body">
       <h5 class="card-title">
-        <strong class="mr-auto title"><i class="fa fa-terminal"></i> Console Log</strong>
+        <label for="console">
+          <strong class="mr-auto title"><i class="fa fa-terminal"></i> Console Log</strong>
+        </label>
       </h5>
-      <label for="console"></label>
-      <textarea id="console" rows="10" class="h-100"></textarea>
+
+      <textarea id="console" rows="10" class="h-100" readonly="readonly"></textarea>
     </div>
   </div>
 </footer>
