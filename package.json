@@ -24,7 +24,7 @@
     "vendor-copy": "^3.0.1"
   },
   "dependencies": {
-    "electron-json-storage": "^4.5.0",
+    "electron-json-storage": "^4.6.0",
     "jquery": "^3.6.1"
   },
   "vendorCopy": [
