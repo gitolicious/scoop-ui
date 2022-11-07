@@ -18,7 +18,7 @@
   "devDependencies": {
     "@fortawesome/fontawesome-free": "^6.2.0",
     "bootstrap": "^5.2.2",
-    "electron": "^21.2.0",
+    "electron": "^21.2.2",
     "electron-packager": "^17.1.1",
     "tabulator-tables": "^5.4.2",
     "vendor-copy": "^3.0.1"
