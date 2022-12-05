@@ -20,7 +20,7 @@
     "bootstrap": "^5.2.3",
     "electron": "^22.0.0",
     "electron-packager": "^17.1.1",
-    "tabulator-tables": "^5.4.2",
+    "tabulator-tables": "^5.4.3",
     "vendor-copy": "^3.0.1"
   },
   "dependencies": {
