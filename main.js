@@ -139,7 +139,7 @@ ipc.on('scoop-list', (_event) => {
 );
 
 ipc.on('scoop-status', (_event) => {
-  const scoopStatusRegex = /^(?<name>[^\s]+)\s+(?<version>[^\s]+)\s+(?<latest>[^\s]+)\s*$/;
+  const scoopStatusRegex = /^(?<name>[^\s]+)\s+(?<version>[^\s]+)\s+(?<latest>[^\s]*[^!])\s*$/;
   const eventId = getRandomId();
 
   mainWindow.webContents.send('scoop-status-started', eventId);
