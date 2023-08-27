@@ -13,7 +13,8 @@ let mainWindow;
 
 let favoriteBucket;
 
-const scoopBinary = `${process.env["SCOOP"]}\\apps\\scoop\\current\\bin\\scoop.ps1`;
+const scoopDir = process.env["SCOOP"] || `${require('os').homedir()}\\scoop`
+const scoopBinary = `${scoopDir}\\apps\\scoop\\current\\bin\\scoop.ps1`;
 
 /////////////////
 // main window //
