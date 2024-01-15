@@ -5,6 +5,7 @@ const { ipcMain: ipc } = require('electron');
 const storage = require('electron-json-storage');
 
 const path = require('path');
+const fs = require('node:fs');
 
 const { spawn } = require('child_process');
 
@@ -182,7 +183,9 @@ ipc.on('scoop-bucket-list', (_event) => {
       'list',
     ],
     (bucket) => {
-      if (bucket.trim()) mainWindow.webContents.send('bucket-list-entry', bucket, bucket === favoriteBucket);
+      if (bucket.trim() && !bucket.startsWith("----") && !bucket.startsWith("Name ")){
+        mainWindow.webContents.send('bucket-list-entry', bucket.split(" ")[0], bucket === favoriteBucket);
+      }
     },
     (code) => {
       mainWindow.webContents.send('scoop-bucket-list-finished', eventId, code === 0);
@@ -283,8 +286,8 @@ ipc.on('scoop-checkver', (_event, bucket) => {
   });
 
   console.log(`scoop checkver bucket ${bucket}`);
-  let bucketFolder = `${process.env["SCOOP"]}\\buckets\\${bucket}${bucketSubFolder}`;
-  if (fs.existsSync(`${process.env["SCOOP"]}\\buckets\\${bucket}\\bucket`)) {
+  let bucketFolder = `${process.env["SCOOP"]}\\buckets\\${bucket}`;
+  if (fs.existsSync(`${bucketFolder}\\bucket`)) {
     bucketFolder += '\\bucket'
   };
   scoopSpawn(

@@ -9,16 +9,16 @@ const scoopButtons = {
   list: { element: document.querySelector('.scoop-list'), channel: 'scoop-list' },
   status: { element: document.querySelector('.scoop-status'), channel: 'scoop-status' },
   update: { element: document.querySelector('.scoop-update'), channel: 'scoop-update' },
-  updateAll: { element: document.querySelector('.scoop-update-all'), channel: 'scoop-update-all' }
+  updateAll: { element: document.querySelector('.scoop-update-all'), channel: 'scoop-update-all' },
 };
 
 const modalButtons = {
   uninstall: { element: document.querySelector('#uninstall-modal .confirm'), channel: 'scoop-uninstall-app' },
-  checkver: { element: document.querySelector('#bucket-selection-modal .confirm'), channel: 'scoop-checkver' }
+  checkver: { element: document.querySelector('#bucket-selection-modal .confirm'), channel: 'scoop-checkver' },
 };
 
 const columnButtons = {
-  update: { elementSelector: '#scoop-apps ["tabulator-field"="update"]', channel: 'scoop-update-app' }
+  update: { elementSelector: '#scoop-apps ["tabulator-field"="update"]', channel: 'scoop-update-app' },
 };
 
 // main table
@@ -57,7 +57,7 @@ document.addEventListener('DOMContentLoaded', (_event) => {
         sorter: 'string',
         formatter: (cell) => /[^\\]*$/.exec(cell.getValue())[0],
         tooltip: (cell) => cell.getValue().includes('\\') ? cell.getValue() : false,
-        headerFilter: 'select',
+        headerFilter: 'list',
         headerFilterParams: { values: [] }
       },
       {
@@ -76,7 +76,7 @@ document.addEventListener('DOMContentLoaded', (_event) => {
         title: 'Up to date',
         field: 'upToDate',
         formatter: 'tickCross',
-        headerFilter: 'select',
+        headerFilter: 'list',
         headerFilterParams: { values: { 'true': '✔', 'false': '❌' } }
       },
       {
@@ -87,7 +87,7 @@ document.addEventListener('DOMContentLoaded', (_event) => {
       },
       {
         title: 'Uninstall',
-        formatter: (_cell) => '<i class="fa fa-trash" data-toggle="modal" data-target="#uninstall-modal"></i>',
+        formatter: (_cell) => '<i class="fa fa-trash" data-bs-toggle="modal" data-bs-target="#uninstall-modal"></i>',
         cellClick: (_uiEvent, cell) => $('#uninstall-modal').data('app', cell.getRow().getData().name)
       }
     ],
