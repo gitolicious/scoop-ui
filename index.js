@@ -44,12 +44,13 @@ document.addEventListener('DOMContentLoaded', (_event) => {
     reactiveData: true,
     data: scoopApps,
     index: 'name',
+    layout: 'fitColumns',
     columns: [
       {
         title: 'Name',
         field: 'name',
         sorter: 'string',
-        width: 200
+        minWidth: 150
       },
       {
         title: 'Bucket',
