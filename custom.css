@@ -131,7 +131,6 @@ main.container {
 
 .tabulator-row:hover {
   background: #f1f5f9 !important;
-  transform: scale(1.01);
 }
 
 .tabulator-row.tabulator-row-even {
