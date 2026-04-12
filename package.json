@@ -6,6 +6,7 @@
   "scripts": {
     "start": "electron .",
     "start-dev": "set NODE_ENV=development&& electron .",
+    "test": "node --test",
     "postinstall": "vendor-copy",
     "dist": "electron-packager . scoop-ui --platform=win32 --arch=x64 --out ./out --overwrite"
   },
