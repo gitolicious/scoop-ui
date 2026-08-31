@@ -2,172 +2,142 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self'">
   <title>Scoop UI</title>
 
-  <!--------->
-  <!-- CSS -->
-  <!--------->
-  <!-- bootstrap -->
   <link rel="stylesheet" href="dist/bootstrap/css/bootstrap.min.css">
-  <!-- custom -->
+  <link rel="stylesheet" href="dist/fontawesome/css/all.css">
+  <link rel="stylesheet" href="dist/tabulator/css/tabulator.min.css">
   <link rel="stylesheet" href="custom.css">
 </head>
-<body>
+<body class="d-flex flex-column">
 
 <header>
-  <!-- Fixed navbar -->
-  <nav class="navbar navbar-expand-md navbar-dark fixed-top bg-dark">
-    <a class="navbar-brand" href="#">Scoop UI</a>
-    <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarCollapse"
-            aria-controls="navbarCollapse" aria-expanded="false" aria-label="Toggle navigation">
-      <span class="navbar-toggler-icon"></span>
-    </button>
-    <div class="collapse navbar-collapse" id="navbarCollapse">
-      <ul class="navbar-nav mr-auto">
-        <li>
-          <a class="btn btn-primary scoop-list" role="button">
-            <i class="fa fa-clock wait collapse float-left"></i>
-            List
-          </a>
-        </li>
-        <li>
-          <a class="btn btn-primary scoop-status" role="button">
-            <i class="fa fa-clock wait collapse"></i>
-            Status
-          </a>
-        </li>
-        <li>
-          <a class="btn btn-primary scoop-update" role="button">
-            <i class="fa fa-clock wait collapse"></i>
-            Update
-          </a>
-        </li>
-        <li>
-          <a class="btn btn-primary scoop-checkver" role="button" data-bs-toggle="modal"
-             data-bs-target="#bucket-selection-modal">
-            <i class="fa fa-clock wait collapse"></i>
-            Check Versions
-          </a>
-        </li>
-        <li>
-          <a class="btn btn-primary scoop-update-all d-none" role="button">
-            <i class="fa fa-clock wait collapse"></i>
-            Update All
-          </a>
-        </li>
-      </ul>
+  <nav class="navbar navbar-expand-md fixed-top">
+    <div class="container-fluid">
+      <a class="navbar-brand" href="#"><i class="fa-solid fa-box-open me-2"></i>Scoop UI</a>
+      <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarCollapse"
+              aria-controls="navbarCollapse" aria-expanded="false" aria-label="Toggle navigation">
+        <span class="navbar-toggler-icon"></span>
+      </button>
+      <div class="collapse navbar-collapse" id="navbarCollapse">
+        <ul class="navbar-nav me-auto">
+          <li class="nav-item">
+            <button class="btn btn-nav scoop-list" type="button">
+              <i class="fa fa-clock wait collapse"></i>
+              <span>List</span>
+            </button>
+          </li>
+          <li class="nav-item">
+            <button class="btn btn-nav scoop-status" type="button">
+              <i class="fa fa-clock wait collapse"></i>
+              <span>Status</span>
+            </button>
+          </li>
+          <li class="nav-item">
+            <button class="btn btn-nav scoop-update" type="button">
+              <i class="fa fa-clock wait collapse"></i>
+              <span>Update</span>
+            </button>
+          </li>
+          <li class="nav-item">
+            <button class="btn btn-nav scoop-checkver" type="button" data-bs-toggle="modal"
+                    data-bs-target="#bucket-selection-modal">
+              <i class="fa fa-clock wait collapse"></i>
+              <span>Check Versions</span>
+            </button>
+          </li>
+          <li class="nav-item">
+            <button class="btn btn-nav scoop-update-all d-none" type="button">
+              <i class="fa fa-clock wait collapse"></i>
+              <span>Update All</span>
+            </button>
+          </li>
+        </ul>
+      </div>
     </div>
   </nav>
 </header>
 
-<!-- Begin page content -->
-<main role="main" class="container pt-5">
-  <!-- app table -->
-  <div id="scoop-apps"></div>
+<main class="container-fluid flex-grow-1">
+  <div id="scoop-apps" class="card"></div>
 </main>
 
 <footer class="footer">
-  <div class="card">
-    <div class="card-body">
-      <h5 class="card-title">
-        <label for="console">
-          <strong class="mr-auto title"><i class="fa fa-terminal"></i> Console Log</strong>
-        </label>
-      </h5>
-
-      <textarea id="console" rows="10" class="h-100" readonly="readonly"></textarea>
+  <div class="card console-card">
+    <div class="card-header">
+      <label for="console"><i class="fa fa-terminal me-2"></i>Console Log</label>
+    </div>
+    <div class="card-body p-0">
+      <textarea id="console" rows="8" class="form-control" readonly="readonly"></textarea>
     </div>
   </div>
 </footer>
 
-<!-- toasts -->
-<div id="toasts" class="container fixed-bottom">
-  <div class="toast template d-none" role="alert" aria-live="assertive" aria-atomic="true">
-    <button type="button" class="mx-2 my-1 close" data-bs-dismiss="toast" aria-label="Close">
-      <span aria-hidden="true">&times;</span>
-    </button>
+<!-- Toast container -->
+<div id="toasts" class="toast-container position-fixed bottom-0 end-0 p-3">
+  <div class="toast template d-none" role="alert" aria-live="assertive" aria-atomic="true" data-bs-delay="5000">
+    <div class="toast-header">
+      <i class="fa-solid fa-circle-info me-2 text-primary"></i>
+      <strong class="me-auto">Scoop UI</strong>
+      <button type="button" class="btn-close" data-bs-dismiss="toast" aria-label="Close"></button>
+    </div>
     <div class="toast-body"></div>
     <div class="toast-footer">
-      <div class="progress d-none">
+      <div class="progress d-none" style="height: 3px;">
         <div class="progress-bar progress-bar-striped progress-bar-animated w-100" role="progressbar"></div>
       </div>
     </div>
   </div>
 </div>
 
-<!-- modals -->
-<div id="uninstall-modal" class="modal fade" tabindex="-1" role="dialog">
-  <div class="modal-dialog" role="document">
+<!-- Modals -->
+<div id="uninstall-modal" class="modal fade" tabindex="-1" aria-hidden="true">
+  <div class="modal-dialog modal-dialog-centered">
     <div class="modal-content">
       <div class="modal-header">
-        <h5 class="modal-title">App Uninstall</h5>
-        <button type="button" class="close" data-bs-dismiss="modal" aria-label="Close">
-          <span aria-hidden="true">&times;</span>
-        </button>
+        <h5 class="modal-title"><i class="fa-solid fa-trash-can me-2"></i>App Uninstall</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
       </div>
       <div class="modal-body">
-        <p>Are you sure you want to uninstall this app?</p>
+        <p class="mb-0">Are you sure you want to uninstall this app?</p>
       </div>
       <div class="modal-footer">
-        <a class="btn btn-primary confirm" role="button" data-bs-dismiss="modal">
-          Confirm
-        </a>
-        <a class="btn btn-secondary" role="button" data-bs-dismiss="modal">
-          Cancel
-        </a>
+        <button type="button" class="btn btn-danger confirm" data-bs-dismiss="modal">Uninstall</button>
+        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
       </div>
     </div>
   </div>
 </div>
 
-<div id="bucket-selection-modal" class="modal fade" tabindex="-1" role="dialog">
-  <div class="modal-dialog" role="document">
+<div id="bucket-selection-modal" class="modal fade" tabindex="-1" aria-hidden="true">
+  <div class="modal-dialog modal-dialog-centered">
     <div class="modal-content">
       <div class="modal-header">
-        <h5 class="modal-title">Bucket Selection</h5>
-        <button type="button" class="close" data-bs-dismiss="modal" aria-label="Close">
-          <span aria-hidden="true">&times;</span>
-        </button>
+        <h5 class="modal-title"><i class="fa-solid fa-layer-group me-2"></i>Bucket Selection</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
       </div>
       <div class="modal-body">
         <p>Which bucket do you want to check the versions for?</p>
-        <div id="bucket-selection">
-          <div class="radio template d-none">
-            <label><input type="radio" name="bucket" value=""> </label>
-          </div>
+        <div id="bucket-selection" class="list-group">
+          <label class="list-group-item template d-none">
+            <input type="radio" name="bucket" value="" class="form-check-input me-2">
+            <span class="bucket-name"></span>
+          </label>
         </div>
       </div>
       <div class="modal-footer">
-        <a class="btn btn-primary confirm" role="button" data-bs-dismiss="modal">
-          Confirm
-        </a>
-        <a class="btn btn-secondary" role="button" data-bs-dismiss="modal">
-          Cancel
-        </a>
+        <button type="button" class="btn btn-primary confirm" data-bs-dismiss="modal">Check Versions</button>
+        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
       </div>
     </div>
   </div>
 </div>
 
-
-<!--------------------------->
-<!-- external dependencies -->
-<!--------------------------->
-<!-- bootstrap -->
 <script src="dist/jquery/js/jquery.min.js"></script>
 <script src="dist/bootstrap/js/bootstrap.min.js"></script>
-
-<!-- tabulator -->
-<link href="dist/tabulator/css/tabulator.min.css" rel="stylesheet">
-<script type="text/javascript" src="dist/tabulator/js/tabulator.min.js"></script>
-
-<!-- fontawesome -->
-<link href="dist/fontawesome/css/all.css" rel="stylesheet">
-
-<!--------------------------->
-<!-- internal dependencies -->
-<!--------------------------->
+<script src="dist/tabulator/js/tabulator.min.js"></script>
 <script src="./index.js"></script>
 
 </body>

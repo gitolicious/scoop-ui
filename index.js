@@ -203,7 +203,7 @@ ipc.on('bucket-list-entry', (bucket, favorite) => {
     // update checkver modal
     let newRadio = $('#bucket-selection-modal #bucket-selection .template').clone();
     newRadio.find('input').val(bucket);
-    newRadio.find('label').append(bucket);
+    newRadio.find('.bucket-name').text(bucket);
     newRadio.removeClass('d-none');
     newRadio.removeClass('template');
 

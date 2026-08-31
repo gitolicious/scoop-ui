@@ -20,7 +20,7 @@ test('UI shell contains key app container', () => {
 
   assert.match(
     html,
-    /<div id="scoop-apps"><\/div>/,
+    /<div id="scoop-apps"[^>]*><\/div>/,
     'Expected #scoop-apps container to exist'
   );
 
